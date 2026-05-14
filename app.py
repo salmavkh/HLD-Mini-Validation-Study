@@ -114,7 +114,7 @@ with col_center:
             "participant_id_input",
             value=existing_pid,
             label_visibility="collapsed",
-            placeholder="1",
+            placeholder="e.g., 1",
         ).strip().upper()
 
 st.markdown('<div class="spacer-sm"></div>', unsafe_allow_html=True)
