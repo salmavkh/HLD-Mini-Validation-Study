@@ -17,7 +17,7 @@ Streamlit app for a small external validation of HLD descriptor predictions usin
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install streamlit
+pip install requirements.txt
 streamlit run app.py
 ```
 
