@@ -4,7 +4,7 @@ import re
 
 import streamlit as st
 
-from study_utils import get_or_create_progress
+from storage_backend import get_or_create_progress
 
 
 st.set_page_config(page_title="HLD Validation Study", layout="centered")

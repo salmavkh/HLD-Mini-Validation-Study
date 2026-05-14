@@ -17,9 +17,11 @@ Streamlit app for a small external validation of HLD descriptor predictions usin
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install requirements.txt
+pip install -r requirements.txt
 streamlit run app.py
 ```
+
+Note: choose storage backend in [`storage_backend.py`](/Users/salmavkh/ubc26/fourth%20year/Work%20Study/HLD%20PAPER%20REVISION/hld%20mini%20validation%20study/storage_backend.py) by setting `USE_GOOGLE_SHEETS = True/False` before running.
 
 Participant IDs: use numeric IDs (currently `1` to `5`).
 
