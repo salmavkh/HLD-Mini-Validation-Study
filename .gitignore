@@ -1,0 +1,25 @@
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+.pytest_cache/
+.mypy_cache/
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Runtime outputs
+outputs/
+
+# Large/local data (avoid GitHub size limit)
+dataset/audio_predictions_lightgbm_new_va_2.db
+dataset/mp3_corpus/
+
+# Keep sampled list CSV, ignore audio binaries
+dataset/audio_100_pairs/*.mp3
+dataset/audio_100_pairs_wav/*.wav
