@@ -4,9 +4,10 @@ import csv
 import hashlib
 import json
 import random
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Sequence, Tuple
+from zoneinfo import ZoneInfo
 
 import gspread
 import streamlit as st
@@ -36,8 +37,11 @@ DESCRIPTOR_PAIRS: List[Tuple[str, str]] = [
 ]
 
 
+VANCOUVER_TZ = ZoneInfo("America/Vancouver")
+
+
 def utc_now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(VANCOUVER_TZ).isoformat()
 
 
 def _seed_from_text(text: str) -> int:
