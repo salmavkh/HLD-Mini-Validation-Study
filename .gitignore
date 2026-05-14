@@ -22,4 +22,6 @@ dataset/mp3_corpus/
 
 # Keep sampled list CSV, ignore audio binaries
 dataset/audio_100_pairs/*.mp3
-dataset/audio_100_pairs_wav/*.wav
+
+# Models
+models/
