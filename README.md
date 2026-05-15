@@ -36,3 +36,5 @@ Participant IDs: use numeric IDs (currently `1` to `5`).
   - samples 100 files by VA strata and copies them into `dataset/audio_100_pairs/`
 - `convert_sampled_mp3_to_wav.py`:
   - converts sampled MP3 files to WAV in `dataset/audio_100_pairs_wav/`
+- `refresh_audio_100_pairs_wav_from_corpus.py`:
+  - replaces all files in `dataset/audio_100_pairs_wav/` by copying same-named .wav files from `dataset/corpus/` (with overwrite and progress logs).
