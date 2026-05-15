@@ -15,10 +15,18 @@ CREDENTIALS_CSV = PROJECT_ROOT / "participant_credentials.csv"
 
 @st.cache_data(show_spinner=False)
 def load_credentials() -> dict[str, str]:
+    if "participant_credentials" in st.secrets:
+        secret_creds = dict(st.secrets["participant_credentials"])
+        credentials_from_secrets = {
+            str(k).strip(): str(v).strip() for k, v in secret_creds.items()
+        }
+        if credentials_from_secrets:
+            return credentials_from_secrets
+
     if not CREDENTIALS_CSV.exists():
         raise RuntimeError(
             f"Credentials file not found: {CREDENTIALS_CSV}. "
-            "Create participant_credentials.csv first."
+            "For deployment, add [participant_credentials] in Streamlit secrets."
         )
 
     credentials: dict[str, str] = {}
@@ -38,7 +46,10 @@ def load_credentials() -> dict[str, str]:
                 credentials[participant_id] = password
 
     if not credentials:
-        raise RuntimeError("participant_credentials.csv has no credentials.")
+        raise RuntimeError(
+            "participant_credentials.csv has no credentials. "
+            "For deployment, add [participant_credentials] in Streamlit secrets."
+        )
 
     return credentials
 
