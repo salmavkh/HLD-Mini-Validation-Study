@@ -25,3 +25,6 @@ dataset/audio_100_pairs/*.mp3
 
 # Models
 models/
+
+# Full corpus
+dataset/corpus/
