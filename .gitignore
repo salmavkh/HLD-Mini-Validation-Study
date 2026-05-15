@@ -28,3 +28,6 @@ models/
 
 # Full corpus
 dataset/corpus/
+
+# Local participant credentials
+participant_credentials.csv

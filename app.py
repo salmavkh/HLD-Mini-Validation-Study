@@ -1,10 +1,46 @@
 from __future__ import annotations
 
+import csv
 import re
+from pathlib import Path
 
 import streamlit as st
 
 from storage_backend import get_or_create_progress
+
+
+PROJECT_ROOT = Path(__file__).resolve().parent
+CREDENTIALS_CSV = PROJECT_ROOT / "participant_credentials.csv"
+
+
+@st.cache_data(show_spinner=False)
+def load_credentials() -> dict[str, str]:
+    if not CREDENTIALS_CSV.exists():
+        raise RuntimeError(
+            f"Credentials file not found: {CREDENTIALS_CSV}. "
+            "Create participant_credentials.csv first."
+        )
+
+    credentials: dict[str, str] = {}
+    with CREDENTIALS_CSV.open("r", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        if "participant_id" not in (reader.fieldnames or []) or "password" not in (
+            reader.fieldnames or []
+        ):
+            raise RuntimeError(
+                "Invalid participant_credentials.csv header. "
+                "Expected columns: participant_id,password"
+            )
+        for row in reader:
+            participant_id = str(row.get("participant_id", "")).strip()
+            password = str(row.get("password", "")).strip()
+            if participant_id:
+                credentials[participant_id] = password
+
+    if not credentials:
+        raise RuntimeError("participant_credentials.csv has no credentials.")
+
+    return credentials
 
 
 st.set_page_config(page_title="HLD Validation Study", layout="centered")
@@ -41,10 +77,11 @@ st.markdown(
         margin-top: 0.75rem;
       }
       .id-label {
-        text-align: right;
+        text-align: left;
         font-size: 20px;
         color: #2f3344;
         padding-top: 0.35rem;
+        white-space: nowrap;
       }
       .stTextInput > div > div > input {
         font-size: 20px;
@@ -96,7 +133,7 @@ st.markdown(
 )
 
 st.markdown(
-    '<div class="intro-text">Before starting, please enter your assigned participant ID. You should have already received this ID. If you do not have a participant ID but would like to participate, please contact [email]</div>',
+    '<div class="intro-text">Before starting, please enter your assigned user ID and password. You should have already received these credentials. If you do not have them but would like to participate, please contact salmavkh@student.ubc.ca</div>',
     unsafe_allow_html=True,
 )
 
@@ -104,9 +141,9 @@ st.markdown('<div class="spacer-md"></div>', unsafe_allow_html=True)
 
 existing_pid = st.session_state.get("participant_id", "")
 
-col_left, col_center, col_right = st.columns([1.6, 2.0, 1.6])
+col_left, col_center, col_right = st.columns([1.2, 2.8, 1.2])
 with col_center:
-    label_col, input_col = st.columns([1.2, 1.0])
+    label_col, input_col = st.columns([1.0, 1.15])
     with label_col:
         st.markdown('<div class="id-label">Enter user id:</div>', unsafe_allow_html=True)
     with input_col:
@@ -115,7 +152,19 @@ with col_center:
             value=existing_pid,
             label_visibility="collapsed",
             placeholder="e.g., 1",
-        ).strip().upper()
+        ).strip()
+
+    label_col2, input_col2 = st.columns([1.0, 1.15])
+    with label_col2:
+        st.markdown('<div class="id-label">Password:</div>', unsafe_allow_html=True)
+    with input_col2:
+        password_input = st.text_input(
+            "password_input",
+            value="",
+            label_visibility="collapsed",
+            type="password",
+            placeholder="Enter password",
+        ).strip()
 
 st.markdown('<div class="spacer-sm"></div>', unsafe_allow_html=True)
 
@@ -124,12 +173,23 @@ with btn_center:
     submitted = st.button("Submit", type="secondary", use_container_width=False)
 
 if submitted:
-    if not participant_id_input:
-        st.error("Please enter a participant ID.")
+    if not participant_id_input or not password_input:
+        st.error("Please enter both user ID and password.")
         st.stop()
 
-    if not re.fullmatch(r"[1-5]", participant_id_input):
-        st.error("Participant ID must be a number from 1 to 5.")
+    if not re.fullmatch(r"[0-5]", participant_id_input):
+        st.error("User ID or password is incorrect. If you need help, contact the email above.")
+        st.stop()
+
+    try:
+        credentials = load_credentials()
+    except RuntimeError as exc:
+        st.error(str(exc))
+        st.stop()
+
+    expected_password = credentials.get(participant_id_input)
+    if expected_password is None or password_input != expected_password:
+        st.error("User ID or password is incorrect. If you need help, contact the email above.")
         st.stop()
 
     progress = get_or_create_progress(participant_id_input)
