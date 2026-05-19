@@ -54,7 +54,7 @@ def load_credentials() -> dict[str, str]:
     return credentials
 
 
-st.set_page_config(page_title="HLD Validation Study", layout="centered")
+st.set_page_config(page_title="Audio Descriptor Evaluation Study", layout="centered")
 
 st.markdown(
     """
@@ -79,10 +79,19 @@ st.markdown(
         font-size: 18px;
         line-height: 1.45;
         color: #303445;
-        margin-bottom: 0.85rem;
+        margin-bottom: 1.0rem;
+      }
+      .spacer-intro-top {
+        margin-top: 0.3rem;
+      }
+      .spacer-intro-bottom {
+        margin-bottom: 0.35rem;
       }
       .spacer-sm {
         margin-top: 0.25rem;
+      }
+      .spacer-btn {
+        margin-top: 0.45rem;
       }
       .spacer-md {
         margin-top: 0.75rem;
@@ -104,9 +113,10 @@ st.markdown(
         border-radius: 10px;
         font-size: 22px;
         font-weight: 700;
-        min-height: 52px;
-        width: 220px;
-        margin: 0 auto;
+        height: 40px;
+        min-height: 40px;
+        width: 100%;
+        margin: 0;
         display: block;
       }
       .stButton > button:hover {
@@ -119,44 +129,41 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown('<div class="hero-title">Welcome to the HLD Validation Study</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero-title">Audio Descriptor Evaluation Study</div>', unsafe_allow_html=True)
 
-st.markdown('<div class="intro-text">Thank you for participating in this study.</div>', unsafe_allow_html=True)
+st.markdown('<div class="spacer-intro-top"></div>', unsafe_allow_html=True)
 
 st.markdown(
-    '<div class="intro-text">The purpose of this study is to evaluate whether the model\'s predicted high-level sound descriptors align with expert human judgment.</div>',
+    '<div class="intro-text">Thank you for participating in this study. This study evaluates whether the model\'s predicted high-level sound descriptors align with expert human judgment.</div>',
     unsafe_allow_html=True,
 )
 
 st.markdown(
-    '<div class="intro-text">You will be asked to listen to 100 audio files. For each audio file, you will answer 6 descriptor-pair questions. For each pair, please choose the descriptor that best matches the sound. You may choose "Neither / unclear" if neither descriptor clearly fits.</div>',
+    '<div class="intro-text">You will listen to 100 audio files. For each audio file, you will answer 6 descriptor-pair questions. For each pair, please choose the descriptor that best matches the sound. Please judge each descriptor pair independently.</div>',
     unsafe_allow_html=True,
 )
 
 st.markdown(
-    '<div class="intro-text">Please judge each descriptor pair independently.</div>',
+    '<div class="intro-text">Before starting, please enter your assigned user ID and password. Click Save & Next to save your progress. If you exit midway, you can return later and continue from where you left off using the same participant ID.</div>',
     unsafe_allow_html=True,
 )
 
 st.markdown(
-    '<div class="intro-text">Click Save & Next to save your progress. If you exit midway, you can return later and continue from where you left off using the same participant ID.</div>',
+    "<div class=\"intro-text\">If you have any concerns or complaints about your rights as a research participant or your experiences while participating in this study, please contact the Research Participant Complaint Line in the UBC Office of Research Ethics toll-free at 1-877-822-8598, or the UBC Okanagan Research Services Office at 250-807-8832. You may also contact the Research Complaint Line by email at RSIL@ors.ubc.ca and reference ID H24-00580.</div>",
     unsafe_allow_html=True,
 )
 
-st.markdown(
-    '<div class="intro-text">Before starting, please enter your assigned user ID and password. You should have already received these credentials. If you do not have them but would like to participate, please contact salmavkh@student.ubc.ca</div>',
-    unsafe_allow_html=True,
-)
+st.markdown('<div class="spacer-intro-bottom"></div>', unsafe_allow_html=True)
 
 st.markdown('<div class="spacer-md"></div>', unsafe_allow_html=True)
 
 existing_pid = st.session_state.get("participant_id", "")
 
-col_left, col_center, col_right = st.columns([1.2, 2.8, 1.2])
+col_left, col_center, col_right = st.columns([1.4, 2.3, 1.4])
 with col_center:
-    label_col, input_col = st.columns([1.0, 1.15])
+    label_col, input_col = st.columns([0.58, 1.42])
     with label_col:
-        st.markdown('<div class="id-label">Enter user id:</div>', unsafe_allow_html=True)
+        st.markdown('<div class="id-label">User ID:</div>', unsafe_allow_html=True)
     with input_col:
         participant_id_input = st.text_input(
             "participant_id_input",
@@ -165,7 +172,7 @@ with col_center:
             placeholder="e.g., 1",
         ).strip()
 
-    label_col2, input_col2 = st.columns([1.0, 1.15])
+    label_col2, input_col2 = st.columns([0.58, 1.42])
     with label_col2:
         st.markdown('<div class="id-label">Password:</div>', unsafe_allow_html=True)
     with input_col2:
@@ -177,11 +184,11 @@ with col_center:
             placeholder="Enter password",
         ).strip()
 
-st.markdown('<div class="spacer-sm"></div>', unsafe_allow_html=True)
+st.markdown('<div class="spacer-btn"></div>', unsafe_allow_html=True)
 
-btn_left, btn_center, btn_right = st.columns([1.8, 1.4, 1.8])
+btn_left, btn_center, btn_right = st.columns([1.4, 2.3, 1.4])
 with btn_center:
-    submitted = st.button("Submit", type="secondary", use_container_width=False)
+    submitted = st.button("Submit", type="secondary", use_container_width=True)
 
 if submitted:
     if not participant_id_input or not password_input:
@@ -189,7 +196,7 @@ if submitted:
         st.stop()
 
     if not re.fullmatch(r"[0-5]", participant_id_input):
-        st.error("User ID or password is incorrect. If you need help, contact the email above.")
+        st.error("User ID or password is incorrect.")
         st.stop()
 
     try:
@@ -200,7 +207,7 @@ if submitted:
 
     expected_password = credentials.get(participant_id_input)
     if expected_password is None or password_input != expected_password:
-        st.error("User ID or password is incorrect. If you need help, contact the email above.")
+        st.error("User ID or password is incorrect.")
         st.stop()
 
     progress = get_or_create_progress(participant_id_input)
