@@ -23,7 +23,7 @@ st.markdown(
         background-color: #ffffff;
       }
       .block-container {
-        max-width: 860px;
+        max-width: 680px;
         padding-top: 3rem;
         padding-bottom: 2rem;
       }
@@ -107,9 +107,11 @@ st.markdown(
       }
       .stRadio [role="radiogroup"] {
         display: grid !important;
-        grid-template-columns: 1fr 1fr 1.25fr;
+        grid-template-columns: 12rem 12rem;
+        justify-content: start !important;
         align-items: center !important;
-        column-gap: 0.65rem !important;
+        margin-left: 3rem !important;
+        column-gap: 1.1rem !important;
         row-gap: 0 !important;
       }
       .stRadio [role="radiogroup"] > label {
@@ -121,6 +123,8 @@ st.markdown(
         padding-bottom: 0 !important;
         line-height: 1.05 !important;
         justify-self: start;
+        width: 100%;
+        text-align: left !important;
         white-space: nowrap !important;
       }
       div[data-testid="stRadio"] {
@@ -135,6 +139,10 @@ st.markdown(
         font-size: 14px !important;
         line-height: 1.05 !important;
       }
+      .stRadio [role="radiogroup"] > label span {
+        font-size: 14px !important;
+        line-height: 1.05 !important;
+      }
       div[data-testid="stRadio"] label > div:first-child {
         margin-top: 0 !important;
         margin-bottom: 0 !important;
@@ -144,6 +152,27 @@ st.markdown(
       }
       div[data-testid="stRadio"] label span {
         vertical-align: middle !important;
+      }
+      @media (max-width: 768px) {
+        .block-container {
+          padding-top: 1.4rem;
+          padding-left: 0.95rem;
+          padding-right: 0.95rem;
+        }
+        .top-meta {
+          font-size: 14px;
+          flex-wrap: wrap;
+          row-gap: 0.2rem;
+        }
+        .stRadio [role="radiogroup"] {
+          grid-template-columns: max-content max-content !important;
+          margin-left: 0.2rem !important;
+          column-gap: 0.9rem !important;
+        }
+        div[data-testid="stRadio"] {
+          margin-top: -0.25rem !important;
+          margin-bottom: -1.0rem !important;
+        }
       }
     </style>
     """,
@@ -197,8 +226,12 @@ answers = {}
 for idx, (left, right) in enumerate(question_order, start=1):
     left_value = left.lower()
     right_value = right.lower()
+    valid_options = {left_value, right_value}
     descriptor_key = f"{left_value}|{right_value}"
     widget_key = f"choice::{participant_id}::{audio_filename}::{descriptor_key}"
+
+    if widget_key in st.session_state and st.session_state[widget_key] not in valid_options:
+        del st.session_state[widget_key]
 
     if widget_key not in st.session_state and descriptor_key in saved_answers:
         saved_value = saved_answers[descriptor_key]
@@ -206,7 +239,8 @@ for idx, (left, right) in enumerate(question_order, start=1):
             saved_value = left_value
         elif saved_value == "right":
             saved_value = right_value
-        st.session_state[widget_key] = saved_value
+        if saved_value in valid_options:
+            st.session_state[widget_key] = saved_value
 
     st.markdown('<div class="row-content">', unsafe_allow_html=True)
     row_label_col, row_choice_col = st.columns([1.0, 3.2], vertical_alignment="center")
@@ -215,11 +249,10 @@ for idx, (left, right) in enumerate(question_order, start=1):
     with row_choice_col:
         response = st.radio(
             label=f"Descriptor {idx} choice",
-            options=[left_value, right_value, "neither_unclear"],
+            options=[left_value, right_value],
             format_func=lambda x, l=left, r=right: {
                 l.lower(): l,
                 r.lower(): r,
-                "neither_unclear": "Neither/unclear",
             }[x],
             horizontal=True,
             index=None,
