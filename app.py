@@ -139,7 +139,7 @@ st.markdown(
 )
 
 st.markdown(
-    '<div class="intro-text">You will listen to 100 audio files. For each audio file, you will answer 6 descriptor-pair questions. For each pair, please choose the descriptor that best matches the sound. Please judge each descriptor pair independently.</div>',
+    '<div class="intro-text">You will listen to 100 short audio files. For each audio file, you will answer 6 descriptor-pair questions. For each pair, please choose the descriptor that best matches the sound. Please judge each descriptor pair independently.</div>',
     unsafe_allow_html=True,
 )
 
