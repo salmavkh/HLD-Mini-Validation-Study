@@ -28,9 +28,9 @@ DESCRIPTOR_PAIRS: List[Tuple[str, str]] = [
     ("Aggressive", "Peaceful"),
     ("Alarming", "Soothing"),
     ("Dangerous", "Safe"),
-    ("Blunt", "Sharp"),
-    ("Digital", "Analogue"),
-    ("Electronic", "Acoustic"),
+    ("Orderly", "Chaotic"),
+    ("Reassuring", "Distressing"),
+    ("Uncomfortable", "Comfortable"),
 ]
 
 
